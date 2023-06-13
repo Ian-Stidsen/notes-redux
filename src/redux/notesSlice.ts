@@ -1,25 +1,36 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Note, Tag } from "../App";
+import { Note } from "../App";
 
-const initialState: Note = {
-  id: 'initial-id',
-  title: 'Todo Title',
-  body: 'Todo body',
-  tags: [],
-}
+type NoteState = Array<Note>;
+
+const initialState: NoteState = [
+  {
+    id: '1',
+    title: 'First note',
+    text: 'This is the first note',
+    tagIDs: ['2'],
+  }
+];
 
 export const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    changeTitle: (state, action: PayloadAction<string>) => {
-      state.title = action.payload
+    addNote: (state: NoteState, noteData: PayloadAction<Note>) => {
+      state.push(noteData.payload);
     },
-    changeBody: (state, action: PayloadAction<string>) => {
-      state.body = action.payload
+    deleteNote: (state: NoteState, id: PayloadAction<string>) => {
+      return state = state.filter(note => note.id !== id.payload);
+    },
+    updateNote: (state: NoteState, updatedNote: PayloadAction<Note>) => {
+      const noteToUpdate = state.find(note => note.id === updatedNote.payload.id);
+      if (noteToUpdate) {
+        noteToUpdate.title = updatedNote.payload.title;
+        noteToUpdate.text = updatedNote.payload.text;
+      }
     },
   },
 })
 
-export const { changeTitle } = notesSlice.actions;
+export const { addNote, deleteNote, updateNote } = notesSlice.actions;
 export default notesSlice.reducer;

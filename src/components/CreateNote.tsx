@@ -1,11 +1,11 @@
 
 
-export function Note() {
+export function CreateNote() {
 
   return (
     <>
       <h1>
-        Note
+        Create Note
       </h1>
     </>
   )

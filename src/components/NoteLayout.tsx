@@ -1,11 +1,11 @@
 
 
-export function Note() {
+export function NoteLayout() {
 
   return (
     <>
       <h1>
-        Note
+        Note Layout
       </h1>
     </>
   )
