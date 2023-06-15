@@ -8,14 +8,6 @@ const initialState: TagState = [
   {
     id: '1',
     label: 'Example Tag 1',
-  },
-  {
-    id: '2',
-    label: 'Example Tag 2',
-  },
-  {
-    id: '3',
-    label: 'Example Tag 3',
   }
 ];
 

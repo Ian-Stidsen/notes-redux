@@ -8,8 +8,8 @@ const initialState: NoteState = [
     id: '1',
     title: 'First note',
     text: 'This is the first note',
-    tagIDs: ['2'],
-  }
+    tagIDs: ['1'],
+  },
 ];
 
 export const notesSlice = createSlice({

@@ -2,6 +2,7 @@ import { Badge, Button, Card, Col, Form, Modal, Row, Stack } from "react-bootstr
 import { Link } from "react-router-dom";
 import { Tag, Note } from "../App";
 import { useMemo, useState } from "react";
+import ReactSelect from "react-select";
 
 type NoteListProps = {
   notes: Note[],
@@ -32,9 +33,9 @@ export function NoteList({ notes, tags }: NoteListProps) {
 
   return (
     <>
-      <Row>
+      <Row className="align-items-center mb-4">
         <Col><h1>Notes</h1></Col>
-        <Col>
+        <Col xs='auto'>
           <Stack gap={2} direction="horizontal">
             <Link to='/create'>
               <Button variant="primary">Create</Button>
@@ -47,7 +48,6 @@ export function NoteList({ notes, tags }: NoteListProps) {
         <Row>
           <Col>
             <Form.Group controlId="title">
-              <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Search By Title"
@@ -56,9 +56,24 @@ export function NoteList({ notes, tags }: NoteListProps) {
               />
             </Form.Group>
           </Col>
+          <Col>
+            <Form.Group controlId="tags">
+            <ReactSelect
+              placeholder='Search By Tag'
+              value={tagSearch.map(tag => ({ value: tag.id, label: tag.label }))}
+              options={tags.map(tag => ({ value: tag.id, label: tag.label }))}
+              onChange={tags => {
+                setTagSearch(tags.map(tag => {
+                  return { id: tag.value, label: tag.label }
+                }))
+              }}
+              isMulti
+            />
+            </Form.Group>
+          </Col>
         </Row>
       </Form>
-      <Row>
+      <Row className="mt-2">
         {filteredNotes.map(note => (
           <Col key={note.id}>
             <NoteCard
