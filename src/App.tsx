@@ -1,16 +1,17 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
-import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { Badge, Button, Col, Container, Row, Stack } from "react-bootstrap"
 import { addNote, deleteNote, updateNote } from "./redux/notesSlice";
-import { addTag, deleteTag } from './redux/tagsSlice.ts';
 import { v4 as uuidv4 } from "uuid";
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { CreateNote } from './components/CreateNote.tsx';
 import { NoteList } from './components/NoteList.tsx';
-import { NoteForm } from './components/NoteForm.tsx';
+import { addTag, deleteTag, updateTag } from './redux/tagsSlice.ts';
+import { Note } from './components/Note.tsx';
+import { NoteLayout } from './components/NoteLayout.tsx';
+import { EditNote } from './components/EditNote.tsx';
 
 export type Tag = {
   id: string,
@@ -19,33 +20,22 @@ export type Tag = {
 
 export type Note = {
   id: string,
-} & NewNoteData
+} & NoteData
 
-export type NewNoteData = {
+export type NoteData = {
   title: string,
   text: string | undefined,
   tagIDs?: string[]
-
 }
+
 
 export function App() {
   const notes = useSelector((state: RootState) => state.notesData);
   const tags = useSelector((state: RootState) => state.tagsData);
 
   const dispatch = useDispatch();
-  /* const titleRef = useRef<HTMLInputElement | null>(null)
-  const tagsRef = useRef<HTMLInputElement | null>(null)
-  const textRef = useRef<HTMLInputElement | null>(null) */
 
-
-  function onCreateNote({ title, text, tagIDs}: NewNoteData) {
-    if (title === '') {
-      alert("Please fill in the title")
-      return;
-    }
-    /* const title: string = titleRef.current!.value;
-    const text: string = textRef.current!.value; */
-    
+  function onCreateNote({ title, text, tagIDs}: NoteData) {
     dispatch(addNote({
       id: uuidv4(),
       title: title,
@@ -54,25 +44,45 @@ export function App() {
     }));
   }
 
-  function test() {
-    console.log(onCreateNote({title:'title', text:'text', tagIDs:['1']}))
-    //const test = tags.find(tag => tag.id === note.tags)
+  function onUpdateNote(id: string, { title, text, tagIDs}: NoteData) {
+    dispatch(updateNote({
+      id: id,
+      title: title,
+      text: text,
+      tagIDs: tagIDs
+    }));
   }
 
-  
+  function onDeleteNote(id: string) {
+    dispatch(deleteNote(id));
+  }
+
+  function onAddTag({ id, label }: Tag) {
+    dispatch(addTag({id: id, label: label}));
+  }
+
+  function onDeleteTag(id: string) {
+    dispatch(deleteTag(id));
+  }
+
+  function onUpdateTag(id: string, label: string) {
+    dispatch(updateTag({id: id, label: label}));
+  }
 
   return (
     <>
       
       <Container>
-        <Button onClick={test}>test</Button>
         <Routes>
           <Route
-            path='/:id'
+            path='/'
             element={
             <NoteList
               notes={notes}
               tags={tags}
+              onAddTag={onAddTag}
+              onDeleteTag={onDeleteTag}
+              onUpdateTag={onUpdateTag}
             />}
           />
           <Route
@@ -80,13 +90,26 @@ export function App() {
             element={
             <CreateNote
               onCreateNote={onCreateNote}
+              onAddTag={onAddTag}
               availableTags={tags}
             />}
           />
           <Route
-            path='/'
-            element={<NoteForm />}
-          />
+            path='/:id'
+            element={<NoteLayout notes={notes} />}
+          >
+            <Route index element={<Note tags={tags} onDelete={onDeleteNote}/>} />
+            <Route
+              path='edit'
+              element={
+                <EditNote
+                  onSubmit={onUpdateNote}
+                  onAddTag={onAddTag}
+                  availableTags={tags}
+                />
+              }
+            />
+          </Route>
           <Route path='*' element={<Navigate to='/' />}/>
         </Routes>
       </Container>

@@ -1,20 +1,22 @@
 
 import { Button } from "react-bootstrap";
-import { Tag, Note, NewNoteData } from "../App";
+import { Tag, Note, NoteData } from "../App";
+import { NoteForm } from "./NoteForm";
 
 type CreateNoteProps = {
-  onCreateNote: (note: NewNoteData) => void,
-  availableTags?: Tag[]
+  onCreateNote: (note: NoteData) => void,
+  onAddTag: (tag: Tag) => void,
+  availableTags?: Tag[],
 }
 
-export function CreateNote({ onCreateNote, availableTags }: CreateNoteProps) {
+export function CreateNote({ onCreateNote, onAddTag, availableTags }: CreateNoteProps) {
   
   return (
     <>
       <h1>
         Create Note
       </h1>
-      <Button onClick={() => onCreateNote({title:'asd', text:'asd', tagIDs:['1']})}>Create</Button>
+      <NoteForm onSubmit={onCreateNote} onAddTag={onAddTag} availableTags={availableTags} />
     </>
   )
 }

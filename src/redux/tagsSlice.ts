@@ -7,7 +7,7 @@ type TagState = Tag[];
 const initialState: TagState = [
   {
     id: '1',
-    label: 'Example Tag 1',
+    label: 'Example Tag',
   }
 ];
 
@@ -18,11 +18,17 @@ export const tagSlice = createSlice({
     addTag: (state: TagState, tagData: PayloadAction<Tag>) => {
       state.push(tagData.payload);
     },
-    deleteTag: (state: TagState, id: PayloadAction<Tag>) => {
-      state = state.filter(tag => tag.id!== id.payload.id);
+    deleteTag: (state: TagState, id: PayloadAction<string>) => {
+      return state.filter(tag => tag.id!== id.payload);
+    },
+    updateTag: (state: TagState, tagData: PayloadAction<Tag>) => {
+      const tagToUpdate = state.find(tag => tag.id === tagData.payload.id);
+      if (tagToUpdate) {
+        tagToUpdate.label = tagData.payload.label;
+      }
     },
   },
 })
 
-export const { addTag, deleteTag } = tagSlice.actions;
+export const { addTag, deleteTag, updateTag } = tagSlice.actions;
 export default tagSlice.reducer;

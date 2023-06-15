@@ -6,8 +6,8 @@ type NoteState = Array<Note>;
 const initialState: NoteState = [
   {
     id: '1',
-    title: 'First note',
-    text: 'This is the first note',
+    title: 'Example Note',
+    text: 'This is an example note',
     tagIDs: ['1'],
   },
 ];
@@ -20,13 +20,14 @@ export const notesSlice = createSlice({
       state.push(noteData.payload);
     },
     deleteNote: (state: NoteState, id: PayloadAction<string>) => {
-      return state = state.filter(note => note.id !== id.payload);
+      return state.filter(note => note.id !== id.payload);
     },
     updateNote: (state: NoteState, updatedNote: PayloadAction<Note>) => {
       const noteToUpdate = state.find(note => note.id === updatedNote.payload.id);
       if (noteToUpdate) {
         noteToUpdate.title = updatedNote.payload.title;
         noteToUpdate.text = updatedNote.payload.text;
+        noteToUpdate.tagIDs = updatedNote.payload.tagIDs;
       }
     },
   },

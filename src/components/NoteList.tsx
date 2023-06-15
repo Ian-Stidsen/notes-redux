@@ -3,10 +3,15 @@ import { Link } from "react-router-dom";
 import { Tag, Note } from "../App";
 import { useMemo, useState } from "react";
 import ReactSelect from "react-select";
+import styles from "./styles/NoteList.module.css";
+import { v4 as uuidv4 } from "uuid";
 
 type NoteListProps = {
   notes: Note[],
-  tags: Tag[]
+  tags: Tag[],
+  onAddTag: ({ id, label}: Tag) => void,
+  onDeleteTag: (id: string) => void,
+  onUpdateTag: (id: string, label: string) => void,
 }
 
 type SimplifiedNote = {
@@ -15,9 +20,20 @@ type SimplifiedNote = {
   tags: Tag[],
 }
 
-export function NoteList({ notes, tags }: NoteListProps) {
-   const [titleSearch, setTitleSearch] = useState<string>("");
-   const [tagSearch, setTagSearch] = useState<Tag[]>([]);
+type EditTagsModalProps = {
+  show: boolean,
+  close: () => void,
+  availableTags: Tag[],
+  onAddTag: ({ id, label}: Tag) => void,
+  onDeleteTag: (id: string) => void,
+  onUpdateTag: (id: string, label: string) => void,
+}
+
+export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: NoteListProps) {
+  const [titleSearch, setTitleSearch] = useState<string>("");
+  const [tagSearch, setTagSearch] = useState<Tag[]>([]);
+  const [editTagsMode, setEditTagsMode] = useState<boolean>(false);
+
   const filteredNotes = useMemo(() => {
     return notes.filter(note => {
       return (titleSearch === '' ||
@@ -40,12 +56,12 @@ export function NoteList({ notes, tags }: NoteListProps) {
             <Link to='/create'>
               <Button variant="primary">Create</Button>
             </Link>
-            <Button variant="outline-secondary">Edit Tags</Button>
+            <Button variant="outline-secondary" onClick={() => setEditTagsMode(true)}>Edit Tags</Button>
           </Stack>
         </Col>
       </Row>
       <Form>
-        <Row>
+        <Row className="mb-4">
           <Col>
             <Form.Group controlId="title">
               <Form.Control
@@ -73,7 +89,7 @@ export function NoteList({ notes, tags }: NoteListProps) {
           </Col>
         </Row>
       </Form>
-      <Row className="mt-2">
+      <Row xs={1} sm={2} lg={3} xl={4} xxl={5} className="g-3">
         {filteredNotes.map(note => (
           <Col key={note.id}>
             <NoteCard
@@ -84,13 +100,21 @@ export function NoteList({ notes, tags }: NoteListProps) {
           </Col>
         ))}
       </Row>
+      <EditTagsModal
+        show={editTagsMode}
+        close={() => setEditTagsMode(false)}
+        availableTags={tags}
+        onAddTag={onAddTag}
+        onDeleteTag={onDeleteTag}
+        onUpdateTag={onUpdateTag}
+      />
     </>
   )
 }
 
 function NoteCard({ id, title, tags}: SimplifiedNote) {
   return (
-    <Card as={Link} to={`/${id}`} className="h-100 text-reset text-decoration-none">
+    <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${styles.card}`}>
       <Card.Body>
         <Stack gap={2} className="align-items-center justify-content-center h-100">
           <span className="fs-5">{title}</span>
@@ -106,5 +130,55 @@ function NoteCard({ id, title, tags}: SimplifiedNote) {
         </Stack>
       </Card.Body>
     </Card>
+  )
+}
+
+function EditTagsModal({
+  show,
+  close,
+  availableTags,
+  onAddTag,
+  onDeleteTag,
+  onUpdateTag,
+}: EditTagsModalProps) {
+  return (
+    <Modal show={show} onHide={close}>
+      <Modal.Header closeButton>
+        <Modal.Title>Edit Tags</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Stack gap={2}>
+            {availableTags.map(tag => (
+              <Row key={tag.id}>
+                <Col>
+                  <Form.Control
+                    type="text"
+                    value={tag.label}
+                    onChange={e => onUpdateTag(tag.id, e.target.value)}
+                  />
+                </Col>
+                <Col xs='auto'>
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => onDeleteTag(tag.id)}
+                  >
+                    &times;
+                  </Button>
+                </Col>
+              </Row>
+            ))}
+            <Row className="justify-content-center">
+              <Col xs='auto'>
+              <Button variant="outline-secondary"
+                onClick={() => onAddTag({id: uuidv4(), label: ''})}>
+                Add Tag 
+              </Button>
+              </Col>
+            </Row>
+          </Stack>
+        </Form>
+      </Modal.Body>
+    </Modal>
   )
 }
