@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { Container } from "react-bootstrap"
