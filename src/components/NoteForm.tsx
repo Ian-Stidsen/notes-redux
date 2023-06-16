@@ -3,8 +3,8 @@ import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import CreatableReactSelect from "react-select/creatable";
 import { v4 as uuidv4 } from "uuid";
-import { Note, NoteData, Tag } from "../App";
-import { tagFinder } from "./tagFinder";
+import { NoteData, Tag } from "../App";
+import { filterTagsByIds } from "../utils/filterTagsByIds";
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void,
@@ -25,7 +25,7 @@ export function NoteForm({
   const textRef = useRef<HTMLTextAreaElement>(null);
 
   const [selectedTags, setSelectedTags] = useState<Tag[]>(() => {
-    return tagFinder(tagIDs, availableTags);
+    return filterTagsByIds(tagIDs, availableTags);
   });
 
   const navigate = useNavigate()

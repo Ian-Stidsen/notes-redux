@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
-import { Badge, Button, Col, Container, Row, Stack } from "react-bootstrap"
+import { Container } from "react-bootstrap"
 import { addNote, deleteNote, updateNote } from "./redux/notesSlice";
 import { v4 as uuidv4 } from "uuid";
 import { Navigate, Route, Routes } from 'react-router-dom';

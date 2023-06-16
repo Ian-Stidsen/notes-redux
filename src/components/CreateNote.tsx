@@ -1,6 +1,5 @@
 
-import { Button } from "react-bootstrap";
-import { Tag, Note, NoteData } from "../App";
+import { Tag, NoteData } from "../App";
 import { NoteForm } from "./NoteForm";
 
 type CreateNoteProps = {

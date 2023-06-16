@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useNote } from "./NoteLayout";
 import { Badge, Button, Col, Row, Stack } from "react-bootstrap";
-import { tagFinder } from "./tagFinder";
+import { filterTagsByIds } from "../utils/filterTagsByIds";
 import { Tag } from "../App";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
@@ -13,7 +13,7 @@ type NoteProps = {
 export function Note({ onDelete, tags }:NoteProps ) {
   const navigate = useNavigate();
   const note = useNote();
-  const selectedTags = tagFinder(note.tagIDs, tags);
+  const selectedTags = filterTagsByIds(note.tagIDs, tags);
   return (
     <>
       <Row className="align-items-center mb-4">

@@ -1,6 +1,6 @@
 import { Tag } from "../App";
 
-export function tagFinder(tagIDs: string[] | undefined, tags: Tag[] | undefined) {
+export function filterTagsByIds(tagIDs: string[] | undefined, tags: Tag[] | undefined) {
   if (!tagIDs || tagIDs.length === 0) return [];
   if (tags) {
     const foundTags: Tag[] = tagIDs.map(id => {
