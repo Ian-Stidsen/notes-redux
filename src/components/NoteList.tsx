@@ -1,7 +1,7 @@
 import { Badge, Button, Card, Col, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Tag, Note } from "../App";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactSelect from "react-select";
 import styles from "./styles/NoteList.module.css";
 import { v4 as uuidv4 } from "uuid";
@@ -35,7 +35,14 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
   const [titleSearch, setTitleSearch] = useState<string>("");
   const [tagSearch, setTagSearch] = useState<Tag[]>([]);
   const [editTagsMode, setEditTagsMode] = useState<boolean>(false);
-  const [showTextMode, setShowTextMode] = useState<boolean>(false);
+  
+  const [showTextMode, setShowTextMode] = useState<boolean>(
+    localStorage.getItem("showTextMode") === "false"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("showTextMode", showTextMode? "false" : "true");
+  }, [showTextMode]);
 
   const filteredNotes = useMemo(() => {
     return notes.filter(note => {
@@ -145,6 +152,9 @@ function NoteCard({ id, title, tags, text, showText}: NoteCardProps) {
                 </Badge>
               ))}
             </Stack>
+          )}
+          {showText && (
+            <p>{text}</p>
           )}
         </Stack>
       </Card.Body>

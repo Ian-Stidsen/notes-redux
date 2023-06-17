@@ -13,11 +13,7 @@ type NoteProps = {
 export function Note({ onDelete, tags }:NoteProps ) {
   const navigate = useNavigate();
   const note = useNote();
- /*  const [selectedTags, setSelectedTags] = useState([]);
-  const selectedTags = tags?.filter(tag => note.id.includes(tag.id)); */
-  /* const [selectedTags, setSelectedTags] = useState<Tag[]>(() => {
-    return tags?.filter(tag => note.id.includes(tag.id)) || [];
-  }); */
+
   const selectedTags = useMemo(() => {
     return tags?.filter(tag => note.tagIDs?.includes(tag.id)) || [];
   }, [tags, note.tagIDs])
