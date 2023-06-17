@@ -37,11 +37,11 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
   const [editTagsMode, setEditTagsMode] = useState<boolean>(false);
   
   const [showTextMode, setShowTextMode] = useState<boolean>(
-    localStorage.getItem("showTextMode") === "false"
+    localStorage.getItem("showTextMode") === "true"
   );
 
   useEffect(() => {
-    localStorage.setItem("showTextMode", showTextMode? "false" : "true");
+    localStorage.setItem("showTextMode", String(showTextMode));
   }, [showTextMode]);
 
   const filteredNotes = useMemo(() => {
@@ -139,13 +139,19 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
 }
 
 function NoteCard({ id, title, tags, text, showText}: NoteCardProps) {
+  if (text){
+    const maxTextLength = 150;
+    const ellipsis = text.length > maxTextLength? "..." : '';
+    const truncatedText = text.slice(0, maxTextLength) + ellipsis;
+    text = truncatedText;
+  }
   return (
     <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${styles.card}`}>
       <Card.Body>
-        <Stack gap={2} className="align-items-center justify-content-center h-100">
+        <Stack gap={2} className="align-items-center justify-content-top h-100">
           <span className="fs-5">{title}</span>
           {tags.length > 0 && (
-            <Stack gap={1} direction="horizontal">
+            <Stack gap={1} direction="horizontal" className="justify-content-center">
               {tags.map(tag => (
                 <Badge key={tag.id} className="text-truncate">
                   {tag.label}
@@ -154,7 +160,7 @@ function NoteCard({ id, title, tags, text, showText}: NoteCardProps) {
             </Stack>
           )}
           {showText && (
-            <p>{text}</p>
+            <p className="text-center">{text}</p>
           )}
         </Stack>
       </Card.Body>

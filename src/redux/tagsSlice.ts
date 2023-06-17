@@ -7,7 +7,7 @@ type TagState = Tag[];
 const initialState: TagState = [
   {
     id: '1',
-    label: 'Example Tag',
+    label: 'Tag example',
   }
 ];
 
