@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useNote } from "./NoteLayout";
 import { Badge, Button, Col, Row, Stack } from "react-bootstrap";
-import { filterTagsByIds } from "../utils/filterTagsByIds";
 import { Tag } from "../App";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { useMemo, useState } from "react";
 
 type NoteProps = {
   onDelete: (id: string) => void,
@@ -13,7 +13,14 @@ type NoteProps = {
 export function Note({ onDelete, tags }:NoteProps ) {
   const navigate = useNavigate();
   const note = useNote();
-  const selectedTags = filterTagsByIds(note.tagIDs, tags);
+ /*  const [selectedTags, setSelectedTags] = useState([]);
+  const selectedTags = tags?.filter(tag => note.id.includes(tag.id)); */
+  /* const [selectedTags, setSelectedTags] = useState<Tag[]>(() => {
+    return tags?.filter(tag => note.id.includes(tag.id)) || [];
+  }); */
+  const selectedTags = useMemo(() => {
+    return tags?.filter(tag => note.tagIDs?.includes(tag.id)) || [];
+  }, [tags, note.tagIDs])
   return (
     <>
       <Row className="align-items-center mb-4">

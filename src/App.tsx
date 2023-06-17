@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { Container } from "react-bootstrap"
-import { addNote, deleteNote, updateNote } from "./redux/notesSlice";
+import { addNote, deleteNote, updateNote, updateNoteTagIDs } from "./redux/notesSlice";
 import { v4 as uuidv4 } from "uuid";
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { CreateNote } from './components/CreateNote.tsx';
@@ -61,6 +61,7 @@ export function App() {
   }
 
   function onDeleteTag(id: string) {
+    dispatch(updateNoteTagIDs(id))
     dispatch(deleteTag(id));
   }
 

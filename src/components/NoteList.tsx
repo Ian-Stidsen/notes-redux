@@ -14,10 +14,12 @@ type NoteListProps = {
   onUpdateTag: (id: string, label: string) => void,
 }
 
-type SimplifiedNote = {
+type NoteCardProps = {
   id: string,
   title: string,
   tags: Tag[],
+  text: string | undefined,
+  showText: boolean,
 }
 
 type EditTagsModalProps = {
@@ -33,6 +35,7 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
   const [titleSearch, setTitleSearch] = useState<string>("");
   const [tagSearch, setTagSearch] = useState<Tag[]>([]);
   const [editTagsMode, setEditTagsMode] = useState<boolean>(false);
+  const [showTextMode, setShowTextMode] = useState<boolean>(false);
 
   const filteredNotes = useMemo(() => {
     return notes.filter(note => {
@@ -47,9 +50,23 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
     });
   }, [titleSearch, tagSearch, notes]);
 
+  function handleShowTextToggle() {
+    setShowTextMode(!showTextMode);
+  }
+
   return (
     <>
       <Row className="align-items-center mb-4">
+        <Col>
+          <Form.Group>
+            <Form.Check
+              type="switch"
+              label="Show Text"
+              checked={showTextMode}
+              onChange={handleShowTextToggle}
+            />
+          </Form.Group>
+        </Col>
         <Col><h1>Notes</h1></Col>
         <Col xs='auto'>
           <Stack gap={2} direction="horizontal">
@@ -96,6 +113,8 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
               id={note.id}
               title={note.title}
               tags={tags.filter(tag => note.tagIDs?.includes(tag.id))}
+              text={note.text}
+              showText={showTextMode}
             />
           </Col>
         ))}
@@ -112,7 +131,7 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
   )
 }
 
-function NoteCard({ id, title, tags}: SimplifiedNote) {
+function NoteCard({ id, title, tags, text, showText}: NoteCardProps) {
   return (
     <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${styles.card}`}>
       <Card.Body>

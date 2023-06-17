@@ -25,13 +25,16 @@ export const notesSlice = createSlice({
     updateNote: (state: NoteState, updatedNote: PayloadAction<Note>) => {
       const noteToUpdate = state.find(note => note.id === updatedNote.payload.id);
       if (noteToUpdate) {
-        noteToUpdate.title = updatedNote.payload.title;
-        noteToUpdate.text = updatedNote.payload.text;
-        noteToUpdate.tagIDs = updatedNote.payload.tagIDs;
+        Object.assign(noteToUpdate, updatedNote.payload);
       }
+    },
+    updateNoteTagIDs: (state: NoteState, tagId: PayloadAction<string>) => {
+      state.forEach(note => {
+        note.tagIDs = note.tagIDs?.filter(id => id !== tagId.payload);
+      });
     },
   },
 })
 
-export const { addNote, deleteNote, updateNote } = notesSlice.actions;
+export const { addNote, deleteNote, updateNote, updateNoteTagIDs } = notesSlice.actions;
 export default notesSlice.reducer;

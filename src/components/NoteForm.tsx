@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import CreatableReactSelect from "react-select/creatable";
 import { v4 as uuidv4 } from "uuid";
 import { NoteData, Tag } from "../App";
-import { filterTagsByIds } from "../utils/filterTagsByIds";
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void,
@@ -25,7 +24,7 @@ export function NoteForm({
   const textRef = useRef<HTMLTextAreaElement>(null);
 
   const [selectedTags, setSelectedTags] = useState<Tag[]>(() => {
-    return filterTagsByIds(tagIDs, availableTags);
+    return availableTags?.filter(tag => tagIDs.includes(tag.id)) || [];
   });
 
   const navigate = useNavigate()
