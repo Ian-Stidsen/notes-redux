@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import notesReducer from "./notesSlice";
 import tagsReducer from "./tagsSlice";
+import settingsReducer from "./settingsSlice";
 
 const store = configureStore({
   reducer: {
     notesData: notesReducer,
     tagsData: tagsReducer,
+    settingsData: settingsReducer,
   },
 });
 

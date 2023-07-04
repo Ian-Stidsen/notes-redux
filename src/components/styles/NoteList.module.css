@@ -8,3 +8,12 @@
   translate: 0 -5px;
   box-shadow: 0 5px 8px 0 rgba(0,0,0, 0.2);
 }
+
+.placeholderDarkTheme::placeholder {
+  color: white !important;
+}
+
+.placeholderLightTheme::placeholder {
+  color: #898989 !important;
+}
+

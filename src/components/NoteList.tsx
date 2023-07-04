@@ -1,10 +1,15 @@
 import { Badge, Button, Card, Col, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Tag, Note } from "../App";
-import { useEffect, useMemo, useState } from "react";
-import ReactSelect from "react-select";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
+import ReactSelect, { ControlProps } from "react-select";
 import styles from "./styles/NoteList.module.css";
 import { v4 as uuidv4 } from "uuid";
+import { SettingsModal } from "./SettingsModal";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { outlineColor, secondaryColor, textColor } from "../utils/themeColorUtils";
+import './styles/reactSelectStyles.css'
 
 type NoteListProps = {
   notes: Note[],
@@ -19,7 +24,6 @@ type NoteCardProps = {
   title: string,
   tags: Tag[],
   text: string | undefined,
-  showText: boolean,
 }
 
 type EditTagsModalProps = {
@@ -31,18 +35,24 @@ type EditTagsModalProps = {
   onUpdateTag: (id: string, label: string) => void,
 }
 
+type SelectStateType = {
+  value: string,
+  label: string,
+}
+
 export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: NoteListProps) {
+  const { themeColor, showTextMode } = useSelector((state: RootState) => state.settingsData);
+  
+  const themeColorSecondary = secondaryColor(themeColor)
+  const themeColorText = textColor(themeColor)
+  const themeColorOutline = outlineColor(themeColor)
+  const placeHolderColor = themeColor === "light"? styles.placeholderLightTheme : styles.placeholderDarkTheme
+
   const [titleSearch, setTitleSearch] = useState<string>("");
   const [tagSearch, setTagSearch] = useState<Tag[]>([]);
   const [editTagsMode, setEditTagsMode] = useState<boolean>(false);
-  
-  const [showTextMode, setShowTextMode] = useState<boolean>(
-    localStorage.getItem("showTextMode") === "true"
-  );
+  const [settingsMode, setSettingsMode] = useState<boolean>(false);
 
-  useEffect(() => {
-    localStorage.setItem("showTextMode", String(showTextMode));
-  }, [showTextMode]);
 
   const filteredNotes = useMemo(() => {
     return notes.filter(note => {
@@ -57,22 +67,33 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
     });
   }, [titleSearch, tagSearch, notes]);
 
-  function handleShowTextToggle() {
-    setShowTextMode(!showTextMode);
+  const bgColorHex = themeColor === 'light'? '#ffffff' : '#6c767c';
+  const textColorHex = themeColor === 'light'? '#8d8d8d' : '#ffffff';
+
+  const reactSelectStyles = {
+    control: (baseStyles: CSSProperties, state: ControlProps<SelectStateType>) => ({
+      ...baseStyles,
+      backgroundColor: bgColorHex,
+    }),
+    menu: (baseStyles: CSSProperties) => ({
+      ...baseStyles,
+      backgroundColor: bgColorHex,
+    }),
+    placeholder: (baseStyles: CSSProperties) => ({
+      ...baseStyles,
+      color: textColorHex,
+    }),
+    input: (baseStyles: CSSProperties) => ({
+      ...baseStyles,
+      color: textColorHex,
+    }),
   }
 
   return (
     <>
       <Row className="align-items-center mb-4">
         <Col>
-          <Form.Group>
-            <Form.Check
-              type="switch"
-              label="Show Text"
-              checked={showTextMode}
-              onChange={handleShowTextToggle}
-            />
-          </Form.Group>
+          <Button variant={`outline-${themeColorOutline}`} onClick={() => setSettingsMode(!settingsMode)}>Settings</Button>
         </Col>
         <Col><h1>Notes</h1></Col>
         <Col xs='auto'>
@@ -80,7 +101,7 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
             <Link to='/create'>
               <Button variant="primary">Create</Button>
             </Link>
-            <Button variant="outline-secondary" onClick={() => setEditTagsMode(true)}>Edit Tags</Button>
+            <Button variant={`outline-${themeColorOutline}`} onClick={() => setEditTagsMode(true)}>Edit Tags</Button>
           </Stack>
         </Col>
       </Row>
@@ -93,6 +114,7 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
                 placeholder="Search By Title"
                 value={titleSearch}
                 onChange={e => setTitleSearch(e.target.value)}
+                className={`bg-${themeColorSecondary} text-${themeColorText} ${placeHolderColor}`}
               />
             </Form.Group>
           </Col>
@@ -108,6 +130,10 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
                 }))
               }}
               isMulti
+              //styles={reactSelectStyles}
+              /* className={`react-select-${themeColor}__container`}
+              classNamePrefix={`react-select-${themeColor}`} */
+              styles={reactSelectStyles}
             />
             </Form.Group>
           </Col>
@@ -121,7 +147,6 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
               title={note.title}
               tags={tags.filter(tag => note.tagIDs?.includes(tag.id))}
               text={note.text}
-              showText={showTextMode}
             />
           </Col>
         ))}
@@ -134,22 +159,34 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
         onDeleteTag={onDeleteTag}
         onUpdateTag={onUpdateTag}
       />
+      <SettingsModal
+        show={settingsMode}
+        close={() => setSettingsMode(false)}
+        showTextMode={showTextMode}
+        themeColor={themeColor}
+      />
     </>
   )
 }
 
-function NoteCard({ id, title, tags, text, showText}: NoteCardProps) {
+function NoteCard({ id, title, tags, text }: NoteCardProps) {
+  const { themeColor, showTextMode } = useSelector((state: RootState) => state.settingsData);
+
   if (text){
     const maxTextLength = 150;
     const ellipsis = text.length > maxTextLength? "..." : '';
     const truncatedText = text.slice(0, maxTextLength) + ellipsis;
     text = truncatedText;
   }
+
+  const themeColorSecondary = secondaryColor(themeColor)
+  const themeColorText = textColor(themeColor)
+
   return (
-    <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${styles.card}`}>
+    <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${styles.card} bg-${themeColorSecondary} `}>
       <Card.Body>
         <Stack gap={2} className="align-items-center justify-content-top h-100">
-          <span className="fs-5">{title}</span>
+          <span className={`fs-5 text-${themeColorText}`}>{title}</span>
           {tags.length > 0 && (
             <Stack gap={1} direction="horizontal" className="justify-content-center">
               {tags.map(tag => (
@@ -159,8 +196,8 @@ function NoteCard({ id, title, tags, text, showText}: NoteCardProps) {
               ))}
             </Stack>
           )}
-          {showText && (
-            <p className="text-center">{text}</p>
+          {showTextMode && (
+            <p className={`text-center text-${themeColorText}`}>{text}</p>
           )}
         </Stack>
       </Card.Body>

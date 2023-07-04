@@ -1,16 +1,18 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./redux/store";
 import { Container } from "react-bootstrap"
-import { addNote, deleteNote, updateNote, updateNoteTagIDs } from "./redux/notesSlice";
-import { v4 as uuidv4 } from "uuid";
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { v4 as uuidv4 } from "uuid";
+
+import { RootState } from "./redux/store";
+import { addNote, deleteNote, updateNote, updateNoteTagIDs } from "./redux/notesSlice";
 import { CreateNote } from './components/CreateNote.tsx';
 import { NoteList } from './components/NoteList.tsx';
 import { addTag, deleteTag, updateTag } from './redux/tagsSlice.ts';
 import { Note } from './components/Note.tsx';
 import { NoteLayout } from './components/NoteLayout.tsx';
 import { EditNote } from './components/EditNote.tsx';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export type Tag = {
   id: string,
@@ -31,6 +33,7 @@ export type NoteData = {
 export function App() {
   const notes = useSelector((state: RootState) => state.notesData);
   const tags = useSelector((state: RootState) => state.tagsData);
+  const { themeColor } = useSelector((state: RootState) => state.settingsData);
 
   const dispatch = useDispatch();
 
@@ -69,10 +72,14 @@ export function App() {
     dispatch(updateTag({id: id, label: label}));
   }
 
+  useEffect(() =>  {
+    document.body.style.backgroundColor = themeColor === 'light'? '#f7f9fb' : '#212529';
+  }, [themeColor]);
+
   return (
     <>
       
-      <Container>
+      <Container >
         <Routes>
           <Route
             path='/'
@@ -117,4 +124,4 @@ export function App() {
   )
 }
 
-export default App
+export default App;
