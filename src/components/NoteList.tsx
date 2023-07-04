@@ -1,7 +1,7 @@
 import { Badge, Button, Card, Col, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Tag, Note } from "../App";
-import { CSSProperties, useEffect, useMemo, useState } from "react";
+import { CSSProperties, useMemo, useState } from "react";
 import ReactSelect, { ControlProps } from "react-select";
 import styles from "./styles/NoteList.module.css";
 import { v4 as uuidv4 } from "uuid";
@@ -9,7 +9,7 @@ import { SettingsModal } from "./SettingsModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { outlineColor, secondaryColor, textColor } from "../utils/themeColorUtils";
-import './styles/reactSelectStyles.css'
+import './styles/reactSelectStyles.css';
 
 type NoteListProps = {
   notes: Note[],
@@ -67,25 +67,46 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
     });
   }, [titleSearch, tagSearch, notes]);
 
-  const bgColorHex = themeColor === 'light'? '#ffffff' : '#6c767c';
-  const textColorHex = themeColor === 'light'? '#8d8d8d' : '#ffffff';
+  const backgroundColorHex = themeColor === 'light'? '#ffffff' : '#6c767c';
+  const hoverBackgroundColorHex = themeColor === 'light'? '#efeded' : '#53575a';
+
+  const secondaryColorHex = themeColor === 'light'? '#e5e5e5' : '#ffffff';
+
+  const placeHolderHex = themeColor === 'light'? '#8d8d8d' : '#ffffff';
+  const textColorHex = themeColor === 'light'? '#000000' : '#ffffff';
 
   const reactSelectStyles = {
     control: (baseStyles: CSSProperties, state: ControlProps<SelectStateType>) => ({
       ...baseStyles,
-      backgroundColor: bgColorHex,
+      backgroundColor: backgroundColorHex,
+      boxShadow: state.isFocused? `blue 0px 0px 10px 0px` : 'none',
+      '&:focus': {
+        border: '1px'
+      }
     }),
     menu: (baseStyles: CSSProperties) => ({
       ...baseStyles,
-      backgroundColor: bgColorHex,
+      backgroundColor: backgroundColorHex,
     }),
     placeholder: (baseStyles: CSSProperties) => ({
       ...baseStyles,
-      color: textColorHex,
+      color: placeHolderHex,
     }),
     input: (baseStyles: CSSProperties) => ({
       ...baseStyles,
       color: textColorHex,
+    }),
+    option: (baseStyles: CSSProperties, state: ControlProps<SelectStateType>) => ({
+      ...baseStyles,
+      color: textColorHex,
+      backgroundColor: backgroundColorHex,
+      '&:hover': {
+        backgroundColor: hoverBackgroundColorHex,
+      }
+    }),
+    multiValue: (baseStyles: CSSProperties) => ({
+      ...baseStyles,
+      backgroundColor: secondaryColorHex,
     }),
   }
 
@@ -182,8 +203,10 @@ function NoteCard({ id, title, tags, text }: NoteCardProps) {
   const themeColorSecondary = secondaryColor(themeColor)
   const themeColorText = textColor(themeColor)
 
+  const cardClassName = themeColor === 'light'? styles.card : styles.cardDark;
+
   return (
-    <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${styles.card} bg-${themeColorSecondary} `}>
+    <Card as={Link} to={`/${id}`} className={`h-100 text-reset text-decoration-none ${cardClassName} bg-${themeColorSecondary} `}>
       <Card.Body>
         <Stack gap={2} className="align-items-center justify-content-top h-100">
           <span className={`fs-5 text-${themeColorText}`}>{title}</span>

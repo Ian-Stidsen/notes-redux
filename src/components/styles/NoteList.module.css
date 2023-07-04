@@ -1,12 +1,23 @@
-.card {
+.card,
+.cardDark {
   transition: translate ease-in-out 100ms,
     box-shadow ease-in-out 100ms;
+}
+
+.cardDark {
+  border: 1px solid rgba(255,255,255, 0.5) !important;
 }
 
 .card:hover,
 .card:focus {
   translate: 0 -5px;
   box-shadow: 0 5px 8px 0 rgba(0,0,0, 0.2);
+}
+
+.cardDark:hover,
+.cardDark:focus {
+  translate: 0 -5px;
+  box-shadow: 0 5px 8px 0 rgba(255,255,255, 0.6);
 }
 
 .placeholderDarkTheme::placeholder {
