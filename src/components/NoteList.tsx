@@ -33,6 +33,7 @@ type EditTagsModalProps = {
   onAddTag: ({ id, label}: Tag) => void,
   onDeleteTag: (id: string) => void,
   onUpdateTag: (id: string, label: string) => void,
+  themeColor: string,
 }
 
 type SelectStateType = {
@@ -72,7 +73,7 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
 
   const secondaryColorHex = themeColor === 'light'? '#e5e5e5' : '#ffffff';
 
-  const placeHolderHex = themeColor === 'light'? '#8d8d8d' : '#ffffff';
+  const placeHolderHex = themeColor === 'light'? '#8d8d8d' : '#E6E6E6';
   const textColorHex = themeColor === 'light'? '#000000' : '#ffffff';
 
   const reactSelectStyles = {
@@ -179,6 +180,7 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
         onAddTag={onAddTag}
         onDeleteTag={onDeleteTag}
         onUpdateTag={onUpdateTag}
+        themeColor={themeColor}
       />
       <SettingsModal
         show={settingsMode}
@@ -235,13 +237,19 @@ function EditTagsModal({
   onAddTag,
   onDeleteTag,
   onUpdateTag,
+  themeColor
 }: EditTagsModalProps) {
+  const themeColorText = textColor(themeColor);
+  const themeColorSecondary = secondaryColor(themeColor);
+  const themeColorOutline = outlineColor(themeColor);
+  const placeHolderColor = themeColor === "light"? styles.placeholderLightTheme : styles.placeholderDarkTheme;
+
   return (
     <Modal show={show} onHide={close}>
-      <Modal.Header closeButton>
-        <Modal.Title>Edit Tags</Modal.Title>
+      <Modal.Header className={`bg-${themeColor}`} closeButton>
+        <Modal.Title className={`text-${themeColorText}`}>Edit Tags</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className={`bg-${themeColor}`}>
         <Form>
           <Stack gap={2}>
             {availableTags.map(tag => (
@@ -251,6 +259,8 @@ function EditTagsModal({
                     type="text"
                     value={tag.label}
                     onChange={e => onUpdateTag(tag.id, e.target.value)}
+                    className={`bg-${themeColorSecondary} text-${themeColorText} ${placeHolderColor}`}
+                    placeholder="Tag Label"
                   />
                 </Col>
                 <Col xs='auto'>
@@ -265,8 +275,8 @@ function EditTagsModal({
             ))}
             <Row className="justify-content-center">
               <Col xs='auto'>
-              <Button variant="outline-secondary"
-                onClick={() => onAddTag({id: uuidv4(), label: ''})}>
+              <Button variant={`outline-${themeColorOutline}`}
+                onClick={() => onAddTag({id: uuidv4(), label: 'New Tag'})}>
                 Add Tag 
               </Button>
               </Col>

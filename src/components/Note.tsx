@@ -4,6 +4,9 @@ import { Badge, Button, Col, Row, Stack } from "react-bootstrap";
 import { Tag } from "../App";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { useMemo, useState } from "react";
+import { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
+import { outlineColor, secondaryColor, textColor } from "../utils/themeColorUtils";
 
 type NoteProps = {
   onDelete: (id: string) => void,
@@ -11,8 +14,12 @@ type NoteProps = {
 }
 
 export function Note({ onDelete, tags }:NoteProps ) {
+  const { themeColor } = useSelector((state: RootState) => state.settingsData);
   const navigate = useNavigate();
   const note = useNote();
+
+  const themeColorText = textColor(themeColor);
+  const themeColorOutline = outlineColor(themeColor);
 
   const selectedTags = useMemo(() => {
     return tags?.filter(tag => note.tagIDs?.includes(tag.id)) || [];
@@ -21,7 +28,7 @@ export function Note({ onDelete, tags }:NoteProps ) {
     <>
       <Row className="align-items-center mb-4">
         <Col>
-          <h1>{note.title}</h1>
+          <h1 className={`text-${themeColorText}`}>{note.title}</h1>
           <Stack gap={1} direction="horizontal" className="flex-wrap">
             {selectedTags.map(tag => (
               <Badge key={tag.id}>
@@ -40,12 +47,12 @@ export function Note({ onDelete, tags }:NoteProps ) {
               navigate("/")
               }}>Delete</Button>
             <Link to='/'>
-              <Button variant="outline-secondary">Back</Button>
+              <Button variant={`outline-${themeColorOutline}`}>Back</Button>
             </Link>
           </Stack>
         </Col>
       </Row>
-      <ReactMarkdown>{note.text}</ReactMarkdown>
+      <ReactMarkdown className={`text-${themeColorText}`}>{note.text}</ReactMarkdown>
     </>
   )
 }

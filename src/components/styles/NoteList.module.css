@@ -21,7 +21,7 @@
 }
 
 .placeholderDarkTheme::placeholder {
-  color: white !important;
+  color: #E6E6E6 !important;
 }
 
 .placeholderLightTheme::placeholder {

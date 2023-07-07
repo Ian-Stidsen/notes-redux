@@ -1,7 +1,7 @@
-import { Button, Col, Form, Modal, Row, Stack } from "react-bootstrap";
+import { Col, Form, Modal, Row, Stack } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setThemeColor, setShowTextMode } from "../redux/settingsSlice";
-import { useEffect, useState } from "react";
+import { textColor } from "../utils/themeColorUtils";
 
 type SettingsModalProps = {
   show: boolean,
@@ -21,27 +21,19 @@ export function SettingsModal({
     'light',
     'dark',
   ]
-  
-  useEffect(() => {
-    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const systemThemePreferences = systemThemeQuery.matches ? 'dark' : 'light';
-    
-    dispatch(setThemeColor(systemThemePreferences))
-  }, []);
-  
+  const themeColorText = textColor(themeColor);
 
-  const darkModeTextColor = themeColor === 'dark'? 'light' : 'black'
   return (
     <Modal show={show} onHide={close}>
       <Modal.Header className={`bg-${themeColor}`} closeButton>
-        <Modal.Title className={`text-${darkModeTextColor}`}>Settings</Modal.Title>
+        <Modal.Title className={`text-${themeColorText}`}>Settings</Modal.Title>
       </Modal.Header>
       <Modal.Body className={`py-0 bg-${themeColor}`}>
         <Form>
           <Stack>
             <Row className="border-bottom align-items-center">
               <Col>
-                <Form.Label className={`text-${darkModeTextColor}`}>Show Text</Form.Label>
+                <Form.Label className={`text-${themeColorText}`}>Show Text</Form.Label>
               </Col>
               <Col xs='auto'>
                 <Form.Check
@@ -53,11 +45,11 @@ export function SettingsModal({
             </Row>
             <Row className="align-items-center">
               <Col>
-                <Form.Label className={`text-${darkModeTextColor}`}>Theme Color</Form.Label>
+                <Form.Label className={`text-${themeColorText}`}>Theme Color</Form.Label>
               </Col>
               <Col xs='auto'>
                 <Form.Select
-                  className={`border-0 bg-${themeColor} text-${darkModeTextColor}`}
+                  className={`border-0 bg-${themeColor} text-${themeColorText}`}
                   defaultValue={themeColor}
                   onChange={option => dispatch(setThemeColor(option.currentTarget.value))}
                 >

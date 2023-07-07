@@ -1,4 +1,7 @@
+import { useSelector } from "react-redux";
 import { NoteData, Tag } from "../App";
+import { RootState } from "../redux/store";
+import { textColor } from "../utils/themeColorUtils";
 import { NoteForm } from "./NoteForm";
 import { useNote } from "./NoteLayout";
 
@@ -9,10 +12,12 @@ type EditNoteProps = {
 }
 
 export function EditNote({ onSubmit, onAddTag, availableTags }: EditNoteProps) {
+  const { themeColor } = useSelector((state: RootState) => state.settingsData);
+  const themeColorText = textColor(themeColor);
   const note = useNote();
   return (
     <>
-      <h1>
+      <h1 className={`text-${themeColorText}`}>
         Edit Note
       </h1>
       <NoteForm

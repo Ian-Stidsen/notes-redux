@@ -1,0 +1,7 @@
+.placeholderDarkTheme::placeholder {
+  color: #E6E6E6 !important;
+}
+
+.placeholderLightTheme::placeholder {
+  color: #898989 !important;
+}
