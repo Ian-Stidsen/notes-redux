@@ -2,14 +2,13 @@ import { Badge, Button, Card, Col, Form, Modal, Row, Stack } from "react-bootstr
 import { Link } from "react-router-dom";
 import { Tag, Note } from "../App";
 import { CSSProperties, useMemo, useState } from "react";
-import ReactSelect, { ControlProps } from "react-select";
+import ReactSelect, { ControlProps, StylesConfig, GroupBase } from "react-select";
 import styles from "./styles/NoteList.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { SettingsModal } from "./SettingsModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { outlineColor, secondaryColor, textColor } from "../utils/themeColorUtils";
-import './styles/reactSelectStyles.css';
 
 type NoteListProps = {
   notes: Note[],
@@ -76,14 +75,15 @@ export function NoteList({ notes, tags, onAddTag, onDeleteTag, onUpdateTag }: No
   const placeHolderHex = themeColor === 'light'? '#8d8d8d' : '#E6E6E6';
   const textColorHex = themeColor === 'light'? '#000000' : '#ffffff';
 
-  const reactSelectStyles = {
+  const reactSelectStyles: StylesConfig<SelectStateType, true, GroupBase<SelectStateType>> = {
     control: (baseStyles: CSSProperties, state: ControlProps<SelectStateType>) => ({
       ...baseStyles,
       backgroundColor: backgroundColorHex,
-      boxShadow: state.isFocused? `blue 0px 0px 10px 0px` : 'none',
-      '&:focus': {
-        border: '1px'
-      }
+      outline: state.isFocused? '#143973 4px solid' : 'none',
+      border: '#dfe2e8 1px solid',
+      '&:hover': {
+        backgroundColor: backgroundColorHex
+      },
     }),
     menu: (baseStyles: CSSProperties) => ({
       ...baseStyles,
